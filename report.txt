@@ -1,0 +1,6 @@
+Attempts=5, Avg=21.3%, High=40.0% (Goutam), Low=0.0% (Ahijit), PassRate=20.0%, AutoSubmitted=1
+C101|Goutam|1|5|0|false|2026-10-11 23:44:32
+C101|Goutam|2|5|48|false|2026-10-11 23:58:25
+G104|Ahijit|3|15|36|false|2026-10-12 00:08:04
+G104|Ahijit|4|15|33|false|2026-10-12 00:09:46
+G104|Ahijit|0|15|21|true|2026-10-12 00:21:38

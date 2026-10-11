@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuizMaster Pro | Online Examination System</title>
+  <meta name="description" content="Next-generation interactive online quiz management platform powered by Java and modern web technologies.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dark">
+  <!-- Particle background canvas -->
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Navigation Bar -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand" id="brand-logo">
+        <div class="brand-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">QuizMaster <span class="badge-pro">PRO</span></span>
+          <span class="brand-subtitle">Java Full-Stack Examination Suite</span>
+        </div>
+      </div>
+
+      <div class="header-center" id="session-info-pill" style="display: none;">
+        <div class="student-pill">
+          <span class="status-dot"></span>
+          <span id="pill-candidate-name">Candidate</span>
+          <span class="pill-divider">•</span>
+          <span id="pill-candidate-id" class="code-font">C000</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Backend Status Badge -->
+        <div class="server-badge" id="server-status" title="Connection status with Java HTTP backend">
+          <span class="indicator-dot online"></span>
+          <span class="status-text">Java Backend Live</span>
+        </div>
+
+        <!-- Mode Navigation -->
+        <nav class="nav-tabs" id="main-nav">
+          <button class="nav-btn active" id="tab-student" data-target="view-portal">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Student Portal
+          </button>
+          <button class="nav-btn" id="tab-battle" data-target="view-battle">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            1v1 Arena ⚔️
+          </button>
+          <button class="nav-btn" id="tab-leaderboard" data-target="view-leaderboard">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+            Leaderboard 🏆
+          </button>
+          <button class="nav-btn" id="tab-admin" data-target="view-admin">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            Instructor Hub
+          </button>
+        </nav>
+
+        <!-- Theme Toggle -->
+        <button class="theme-toggle-btn" id="theme-toggle" aria-label="Toggle theme">
+          <svg class="sun-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="moon-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Container -->
+  <main class="app-main">
+
+    <!-- ================= VIEW 1: STUDENT PORTAL (LOGIN / REGISTER) ================= -->
+    <section class="view-section active" id="view-portal">
+      <div class="portal-hero">
+        <div class="hero-content">
+          <div class="badge-pill">
+            <span class="sparkle">✨</span> Academic Year 2025–26 • Computer Science & Engineering
+          </div>
+          <h1 class="hero-headline">Interactive Java Examination <span class="gradient-text">Management System</span></h1>
+          <p class="hero-subtext">Secure, timed assessments with anti-cheat live tab proctoring, randomized jumbled questions, real-time leaderboard, and 1v1 speed clash arena.</p>
+
+          <div class="quick-highlights">
+            <div class="highlight-item">
+              <div class="highlight-icon">⏱️</div>
+              <div>
+                <strong>Timed Sessions</strong>
+                <span id="label-exam-duration">120s Live Countdown</span>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <div class="highlight-icon">🛡️</div>
+              <div>
+                <strong>Live Proctoring</strong>
+                <span>Tab Lock & Focus Guard</span>
+              </div>
+            </div>
+            <div class="highlight-item">
+              <div class="highlight-icon">🔀</div>
+              <div>
+                <strong>Anti-Cheat Jumble</strong>
+                <span>Randomized Questions</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="portal-card-container">
+          <div class="glass-card auth-card">
+            <div class="card-tabs">
+              <button class="card-tab active" id="auth-tab-existing" data-auth="existing">Registered Login</button>
+              <button class="card-tab" id="auth-tab-new" data-auth="new">New Candidate Registration</button>
+            </div>
+
+            <!-- Existing Candidate Login Form -->
+            <form id="form-login" class="auth-form active">
+              <div class="form-group">
+                <label for="login-id">Candidate ID <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input type="text" id="login-id" placeholder="e.g. C101" required autocomplete="off">
+                </div>
+                <span class="input-hint">Tip: Use existing candidate ID (e.g. <code>C101</code>) or select below.</span>
+              </div>
+
+              <!-- Teacher Access Passcode -->
+              <div class="form-group">
+                <label for="login-access-code">Teacher Access Code <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input type="text" id="login-access-code" placeholder="Enter Access Code (e.g. JAVA2026)" value="JAVA2026" required autocomplete="off">
+                </div>
+                <span class="input-hint">Required to unlock exam. Default code: <strong class="code-font" id="hint-code-display">JAVA2026</strong></span>
+              </div>
+
+              <div class="quick-candidates" id="quick-candidates-chips">
+                <span class="chips-label">Available Candidate IDs:</span>
+                <div class="chips-list" id="chips-container">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block" id="btn-start-exam">
+                <span>Unlock & Enter Examination</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </form>
+
+            <!-- New Candidate Registration Form -->
+            <form id="form-register" class="auth-form">
+              <div class="form-group">
+                <label for="reg-id">Candidate ID <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  <input type="text" id="reg-id" placeholder="e.g. C105" required autocomplete="off">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-name">Full Name <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input type="text" id="reg-name" placeholder="e.g. Ananya Das" required autocomplete="off">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-email">Email Address <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  <input type="email" id="reg-email" placeholder="e.g. ananya@college.edu" required autocomplete="off">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="reg-access-code">Teacher Access Code <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input type="text" id="reg-access-code" placeholder="Enter Access Code" value="JAVA2026" required autocomplete="off">
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-accent btn-block" id="btn-submit-register">
+                <span>Complete Registration & Start</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: LIVE QUIZ SESSION ================= -->
+    <section class="view-section" id="view-quiz">
+      <div class="quiz-container">
+        <!-- Top Sticky Control Bar -->
+        <div class="quiz-top-bar glass-card">
+          <div class="candidate-meta">
+            <div class="avatar-circle" id="quiz-avatar">G</div>
+            <div class="meta-details">
+              <h3 id="quiz-student-name">Candidate Name</h3>
+              <p><span class="meta-label">ID:</span> <code id="quiz-student-id">C101</code> • <span class="meta-label">Total Qs:</span> <span id="quiz-total-q-badge">15</span></p>
+            </div>
+          </div>
+
+          <!-- Live Proctor Widget -->
+          <div class="proctor-widget" id="proctor-widget" title="Live proctor monitor active. Leaving tab logs a security violation.">
+            <div class="proctor-badge">
+              <span class="proctor-radar"></span>
+              <span class="proctor-text">Proctor Guard Active</span>
+            </div>
+            <div class="proctor-violations">
+              <span>Violations: <strong id="proctor-violation-count">0</strong>/3</span>
+            </div>
+          </div>
+
+          <!-- Circular Animated Timer -->
+          <div class="quiz-timer-widget" id="timer-widget">
+            <div class="timer-svg-box">
+              <svg width="60" height="60" viewBox="0 0 60 60">
+                <circle class="timer-circle-bg" cx="30" cy="30" r="26"></circle>
+                <circle class="timer-circle-progress" id="timer-progress" cx="30" cy="30" r="26"></circle>
+              </svg>
+              <div class="timer-countdown" id="timer-display">120</div>
+            </div>
+            <div class="timer-text-labels">
+              <span class="timer-title">Time Left</span>
+              <span class="timer-sub" id="timer-warning-text">All quiet</span>
+            </div>
+          </div>
+
+          <!-- Live Progress Bar -->
+          <div class="quiz-progress-wrapper">
+            <div class="progress-info">
+              <span>Progress: <strong id="progress-count">1 of 15</strong></span>
+              <span id="progress-percent-label">7%</span>
+            </div>
+            <div class="progress-bar-track">
+              <div class="progress-bar-fill" id="quiz-progress-bar" style="width: 7%;"></div>
+            </div>
+          </div>
+
+          <!-- Quick Finish Button -->
+          <button class="btn btn-outline-danger btn-sm" id="btn-submit-early">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Submit Exam
+          </button>
+        </div>
+
+        <!-- Main Layout: Question Left, Palette Right -->
+        <div class="quiz-body-grid">
+          <!-- Main Question Card Area -->
+          <div class="question-column">
+            <div class="glass-card question-card" id="question-card">
+              <div class="question-header">
+                <div class="question-badges">
+                  <span class="badge badge-primary" id="q-number-pill">Question 1</span>
+                  <span class="badge badge-secondary" id="q-category-pill">Advanced Java</span>
+                  <span class="badge badge-accent" id="q-jumble-pill" title="Order randomized by Fisher-Yates anti-cheat algorithm">🔀 Jumbled</span>
+                </div>
+                <button class="btn-flag" id="btn-flag-question" title="Mark for review">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                  <span id="flag-text">Flag for Review</span>
+                </button>
+              </div>
+
+              <div class="question-text" id="current-question-text">
+                Loading question prompt...
+              </div>
+
+              <!-- Options Grid (1-4) -->
+              <div class="options-container" id="options-container">
+                <!-- Dynamically populated options -->
+              </div>
+
+              <!-- Bottom Question Navigation -->
+              <div class="question-footer">
+                <button class="btn btn-secondary" id="btn-prev-q">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                  Previous
+                </button>
+                <div class="footer-center">
+                  <button class="btn btn-ghost" id="btn-clear-selection">Clear Choice</button>
+                </div>
+                <button class="btn btn-primary" id="btn-next-q">
+                  Next
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question Navigator Palette Sidebar -->
+          <aside class="palette-sidebar">
+            <div class="glass-card palette-card">
+              <h4 class="palette-title">Question Navigator</h4>
+              <p class="palette-desc">Click any number to jump directly</p>
+
+              <div class="palette-grid" id="palette-grid">
+                <!-- Grid buttons 1..N -->
+              </div>
+
+              <div class="palette-legend">
+                <div class="legend-item"><span class="legend-dot answered"></span> Answered</div>
+                <div class="legend-item"><span class="legend-dot flagged"></span> Flagged</div>
+                <div class="legend-item"><span class="legend-dot current"></span> Current</div>
+                <div class="legend-item"><span class="legend-dot unanswered"></span> Unvisited</div>
+              </div>
+
+              <div class="exam-rules-box">
+                <div class="rules-header">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                  Anti-Cheat Security
+                </div>
+                <p>Questions are dynamically jumbled per candidate. Window tab switching is tracked by live proctor. 3 tab switches will terminate the test.</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 3: SCORECARD & PERFORMANCE REVIEW ================= -->
+    <section class="view-section" id="view-result">
+      <div class="result-container">
+        <!-- Confetti Canvas -->
+        <canvas id="confetti-canvas"></canvas>
+
+        <div class="result-card glass-card">
+          <div class="result-header">
+            <div class="badge-status-pill" id="score-status-badge">PASSED</div>
+            <h2 class="result-title">Examination Performance Report</h2>
+            <p class="result-timestamp" id="score-timestamp">Completed on: 2026-10-12</p>
+          </div>
+
+          <div class="score-summary-grid">
+            <!-- Circular Score Display -->
+            <div class="score-dial-card">
+              <div class="dial-container">
+                <svg width="150" height="150" viewBox="0 0 150 150">
+                  <circle class="dial-bg" cx="75" cy="75" r="62"></circle>
+                  <circle class="dial-progress" id="score-radial-fill" cx="75" cy="75" r="62"></circle>
+                </svg>
+                <div class="dial-content">
+                  <span class="dial-number" id="score-percent-val">100%</span>
+                  <span class="dial-label" id="score-ratio-val">15 / 15 Marks</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detailed Stat Cards -->
+            <div class="stats-cards-col">
+              <div class="mini-stat-item">
+                <div class="stat-icon-wrap blue">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                </div>
+                <div>
+                  <div class="stat-val" id="res-candidate-name">Goutam</div>
+                  <div class="stat-lbl">Candidate: <span id="res-candidate-id">C101</span></div>
+                </div>
+              </div>
+
+              <div class="mini-stat-item">
+                <div class="stat-icon-wrap emerald">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <div>
+                  <div class="stat-val" id="res-time-taken">45s</div>
+                  <div class="stat-lbl">Time Elapsed (Max <span id="res-time-max">120s</span>)</div>
+                </div>
+              </div>
+
+              <div class="mini-stat-item">
+                <div class="stat-icon-wrap purple">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div>
+                  <div class="stat-val" id="res-submission-type">Manual Submission</div>
+                  <div class="stat-lbl">Proctor Status: <span id="res-proctor-verdict">Clean Record</span></div>
+                </div>
+              </div>
+
+              <div class="mini-stat-item">
+                <div class="stat-icon-wrap amber">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div>
+                  <div class="stat-val" id="res-grade">A+ Distinction</div>
+                  <div class="stat-lbl">Academic Grade</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Question-by-Question Breakdown -->
+          <div class="breakdown-section">
+            <div class="breakdown-header">
+              <h3>Detailed Question Analysis</h3>
+              <p>Review your chosen answers alongside correct solutions</p>
+            </div>
+            <div class="breakdown-list" id="breakdown-container">
+              <!-- Rendered per question -->
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="result-actions">
+            <button class="btn btn-secondary" id="btn-print-scorecard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print Official Scorecard
+            </button>
+            <button class="btn btn-accent" id="btn-goto-leaderboard">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+              View Live Leaderboard
+            </button>
+            <button class="btn btn-primary" id="btn-retake-quiz">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              Back to Portal
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 4: LIVE LEADERBOARD ================= -->
+    <section class="view-section" id="view-leaderboard">
+      <div class="leaderboard-container">
+        <div class="leaderboard-header-row">
+          <div>
+            <h2 class="section-title">Hall of Fame: Live Examination Leaderboard 🏆</h2>
+            <p class="section-subtitle">Ranked by maximum score, with faster completion time breaking ties.</p>
+          </div>
+          <div class="leaderboard-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-refresh-leaderboard">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Refresh Rankings
+            </button>
+          </div>
+        </div>
+
+        <!-- Top 3 Podium Cards -->
+        <div class="podium-grid" id="podium-grid">
+          <!-- 2nd Place -->
+          <div class="podium-card silver glass-card" id="podium-silver">
+            <div class="podium-rank-badge">🥈 2nd</div>
+            <div class="podium-avatar">P</div>
+            <h3 class="podium-name" id="podium-silver-name">Priya Sharma</h3>
+            <div class="podium-score" id="podium-silver-score">13 / 15</div>
+            <div class="podium-time" id="podium-silver-time">52s • 86.7%</div>
+          </div>
+
+          <!-- 1st Place (Champion) -->
+          <div class="podium-card gold glass-card" id="podium-gold">
+            <div class="podium-crown">👑</div>
+            <div class="podium-rank-badge">🥇 1st Champion</div>
+            <div class="podium-avatar">G</div>
+            <h3 class="podium-name" id="podium-gold-name">Goutam Kumar Majhi</h3>
+            <div class="podium-score" id="podium-gold-score">15 / 15</div>
+            <div class="podium-time" id="podium-gold-time">38s • 100.0%</div>
+          </div>
+
+          <!-- 3rd Place -->
+          <div class="podium-card bronze glass-card" id="podium-bronze">
+            <div class="podium-rank-badge">🥉 3rd</div>
+            <div class="podium-avatar">R</div>
+            <h3 class="podium-name" id="podium-bronze-name">Rahul Verma</h3>
+            <div class="podium-score" id="podium-bronze-score">11 / 15</div>
+            <div class="podium-time" id="podium-bronze-time">61s • 73.3%</div>
+          </div>
+        </div>
+
+        <!-- Full Rankings Table -->
+        <div class="glass-card table-card">
+          <div class="card-inner-header">
+            <div>
+              <h3 class="card-inner-title">Candidate Performance Standings</h3>
+              <p class="card-inner-desc">Live sorted rankings across all recorded attempts</p>
+            </div>
+            <div class="table-search-box">
+              <input type="text" id="filter-leaderboard" placeholder="Search candidate in leaderboard...">
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Candidate ID</th>
+                  <th>Candidate Name</th>
+                  <th>Score</th>
+                  <th>Percentage</th>
+                  <th>Time Taken</th>
+                  <th>Grade</th>
+                  <th>Proctor Status</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-tbody">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 5: 1v1 SPEED BATTLE ARENA ================= -->
+    <section class="view-section" id="view-battle">
+      <div class="battle-container">
+        <!-- Battle Lobby / Setup Card -->
+        <div class="glass-card battle-lobby-card" id="battle-lobby-card">
+          <div class="text-center battle-lobby-header">
+            <div class="battle-swords-icon">⚔️</div>
+            <h2 class="section-title">1v1 Java Speed Clash Arena</h2>
+            <p class="section-subtitle">Challenge a classmate or the JavaBot Grandmaster in a rapid 5-question speed duel!</p>
+          </div>
+
+          <div class="battle-setup-grid">
+            <!-- Player Setup -->
+            <div class="setup-player-card">
+              <h4>Your Gladiator</h4>
+              <div class="form-group">
+                <label for="battle-player-id">Candidate ID</label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  <input type="text" id="battle-player-id" placeholder="e.g. C101" value="C101" required>
+                </div>
+              </div>
+            </div>
+
+            <!-- VS Badge -->
+            <div class="setup-vs-badge">
+              <span>VS</span>
+            </div>
+
+            <!-- Opponent Setup -->
+            <div class="setup-player-card">
+              <h4>Select Opponent</h4>
+              <div class="form-group">
+                <label for="battle-rival-select">Challenger</label>
+                <select id="battle-rival-select">
+                  <option value="bot_master">🤖 JavaBot Grandmaster (AI Master)</option>
+                  <option value="bot_speed">⚡ CyberCoder (Speed Demon)</option>
+                  <option value="C102">👤 Priya Sharma (C102)</option>
+                  <option value="C103">👤 Rahul Verma (C103)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center" style="margin-top: 2rem;">
+            <button class="btn btn-accent btn-lg" id="btn-start-battle">
+              <span>Enter 1v1 Battle Arena</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Battle Arena View -->
+        <div class="battle-arena-card glass-card" id="battle-arena-card" style="display: none;">
+          <!-- Dual Health / Score Trackers -->
+          <div class="arena-match-header">
+            <!-- Player 1 Status -->
+            <div class="gladiator-box player">
+              <div class="gladiator-avatar" id="gladiator-p1-avatar">P1</div>
+              <div class="gladiator-details">
+                <h4 id="gladiator-p1-name">You (C101)</h4>
+                <div class="gladiator-score-bar-track">
+                  <div class="gladiator-score-bar-fill" id="gladiator-p1-bar" style="width: 0%;"></div>
+                </div>
+                <div class="gladiator-stats">Score: <strong id="gladiator-p1-score">0</strong>/5</div>
+              </div>
+            </div>
+
+            <!-- VS Clash Round Counter -->
+            <div class="arena-vs-indicator">
+              <span class="arena-round-badge" id="arena-round-badge">Round 1 / 5</span>
+              <div class="arena-timer" id="arena-timer">15s</div>
+            </div>
+
+            <!-- Player 2 / Rival Status -->
+            <div class="gladiator-box opponent">
+              <div class="gladiator-avatar rival" id="gladiator-p2-avatar">🤖</div>
+              <div class="gladiator-details">
+                <h4 id="gladiator-p2-name">JavaBot Grandmaster</h4>
+                <div class="gladiator-score-bar-track">
+                  <div class="gladiator-score-bar-fill rival" id="gladiator-p2-bar" style="width: 0%;"></div>
+                </div>
+                <div class="gladiator-stats">Score: <strong id="gladiator-p2-score">0</strong>/5</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arena Question Card -->
+          <div class="arena-question-box">
+            <div class="arena-q-prompt" id="arena-q-prompt">
+              Question loading...
+            </div>
+            <div class="arena-options-grid" id="arena-options-grid">
+              <!-- Dynamically populated options -->
+            </div>
+          </div>
+
+          <div class="arena-footer-status" id="arena-footer-status">
+            Choose an answer quickly! Points awarded for speed and accuracy.
+          </div>
+        </div>
+
+        <!-- Battle Result Screen -->
+        <div class="battle-victory-card glass-card text-center" id="battle-victory-card" style="display: none;">
+          <div class="victory-icon" id="battle-outcome-icon">🏆</div>
+          <h2 class="victory-headline" id="battle-outcome-headline">VICTORY!</h2>
+          <p class="victory-sub" id="battle-outcome-sub">You dominated the 1v1 speed duel against your opponent.</p>
+
+          <div class="battle-final-scores">
+            <div class="final-score-pill">
+              <span id="final-p1-name">You</span>: <strong id="final-p1-score">4</strong>
+            </div>
+            <span class="score-vs">VS</span>
+            <div class="final-score-pill">
+              <span id="final-p2-name">JavaBot</span>: <strong id="final-p2-score">2</strong>
+            </div>
+          </div>
+
+          <div class="battle-actions">
+            <button class="btn btn-primary" id="btn-battle-rematch">Rematch Battle</button>
+            <button class="btn btn-secondary" id="btn-battle-portal">Back to Portal</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 6: INSTRUCTOR & ADMIN HUB ================= -->
+    <section class="view-section" id="view-admin">
+      <div class="admin-container">
+        <!-- Admin Header -->
+        <div class="admin-header-row">
+          <div>
+            <h2 class="section-title">Instructor Intelligence Dashboard ⚙️</h2>
+            <p class="section-subtitle">Real-time candidate metrics, pass-fail analysis, exam passcode control, and question bank administration.</p>
+          </div>
+          <div class="admin-top-actions">
+            <button class="btn btn-primary" id="btn-open-add-q">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add New Question
+            </button>
+            <button class="btn btn-secondary" id="btn-refresh-admin">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+              Refresh Data
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card glass-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Total Attempts</span>
+              <span class="kpi-icon blue">📝</span>
+            </div>
+            <div class="kpi-value" id="kpi-attempts">0</div>
+            <div class="kpi-footer">Completed exam runs</div>
+          </div>
+
+          <div class="kpi-card glass-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Average Score</span>
+              <span class="kpi-icon violet">📊</span>
+            </div>
+            <div class="kpi-value" id="kpi-avg">0.0%</div>
+            <div class="kpi-footer">Cohort mean performance</div>
+          </div>
+
+          <div class="kpi-card glass-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Pass Rate</span>
+              <span class="kpi-icon emerald">🎯</span>
+            </div>
+            <div class="kpi-value" id="kpi-pass-rate">0.0%</div>
+            <div class="kpi-footer"><span id="kpi-pass-ratio">0/0</span> students passed (≥40%)</div>
+          </div>
+
+          <div class="kpi-card glass-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Highest Score</span>
+              <span class="kpi-icon amber">🏆</span>
+            </div>
+            <div class="kpi-value" id="kpi-highest">N/A</div>
+            <div class="kpi-footer" id="kpi-topper">Top candidate</div>
+          </div>
+
+          <div class="kpi-card glass-card">
+            <div class="kpi-header">
+              <span class="kpi-title">Active Questions</span>
+              <span class="kpi-icon rose">📚</span>
+            </div>
+            <div class="kpi-value" id="kpi-questions-count">15</div>
+            <div class="kpi-footer">In active question bank</div>
+          </div>
+        </div>
+
+        <!-- Analytics Visual Chart & Config Grid -->
+        <div class="admin-visual-grid">
+          <!-- Visual Chart Card -->
+          <div class="glass-card chart-card">
+            <div class="card-inner-header">
+              <div>
+                <h3 class="card-inner-title">Score Distribution Spectrum</h3>
+                <p class="card-inner-desc">Percentage breakdown across performance brackets</p>
+              </div>
+            </div>
+            <div class="canvas-chart-container">
+              <canvas id="score-chart" width="600" height="240"></canvas>
+            </div>
+          </div>
+
+          <!-- Quiz Configuration Card -->
+          <div class="glass-card config-card">
+            <div class="card-inner-header">
+              <div>
+                <h3 class="card-inner-title">Exam Settings & Security</h3>
+                <p class="card-inner-desc">Syncs directly with Java server runtime</p>
+              </div>
+            </div>
+
+            <form id="form-config" class="config-form">
+              <div class="form-group">
+                <label for="cfg-code">Teacher Access Passcode <span class="required">*</span></label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <input type="text" id="cfg-code" value="JAVA2026" required>
+                </div>
+                <span class="input-hint">Students must enter this exact code to take tests.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-duration">Quiz Duration (Seconds)</label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <input type="number" id="cfg-duration" min="10" max="600" value="120" required>
+                </div>
+                <span class="input-hint">Standard: 120s. Minimum: 10s.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-passmark">Passing Threshold (%)</label>
+                <div class="input-wrapper">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  <input type="number" id="cfg-passmark" min="10" max="90" value="40" required>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block" id="btn-save-cfg">
+                Save Parameters
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Exam History Table Card -->
+        <div class="glass-card table-card">
+          <div class="card-inner-header">
+            <div>
+              <h3 class="card-inner-title">Exam History Log (`results.txt`)</h3>
+              <p class="card-inner-desc">Complete record of every student submission with timestamp</p>
+            </div>
+            <div class="table-search-box">
+              <input type="text" id="filter-history" placeholder="Filter by name or candidate ID...">
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table" id="history-table">
+              <thead>
+                <tr>
+                  <th>Candidate ID</th>
+                  <th>Student Name</th>
+                  <th>Score</th>
+                  <th>Percentage</th>
+                  <th>Time Taken</th>
+                  <th>Mode</th>
+                  <th>Timestamp</th>
+                  <th>Outcome</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Question Bank Manager Card -->
+        <div class="glass-card table-card">
+          <div class="card-inner-header">
+            <div>
+              <h3 class="card-inner-title">Question Repository (`questions.txt`)</h3>
+              <p class="card-inner-desc">Manage, preview, and add questions to the database</p>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btn-seed-questions">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Restore Standard Bank
+            </button>
+          </div>
+
+          <div class="questions-accordion-list" id="admin-questions-list">
+            <!-- Populated dynamically -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODAL: PROCTOR TAB-SWITCH WARNING ================= -->
+  <div class="modal-overlay" id="modal-proctor-alert">
+    <div class="modal-dialog glass-card modal-sm proctor-modal">
+      <div class="modal-header">
+        <h3 class="proctor-warning-title">⚠️ Security Violation Detected!</h3>
+      </div>
+      <div class="modal-body text-center">
+        <div class="proctor-warning-icon">🚨</div>
+        <h4 id="proctor-warning-headline">Tab Switch / Focus Lost!</h4>
+        <p class="proctor-warning-desc">You navigated away from the active exam window. This event has been logged by the Live Proctor.</p>
+        <div class="warning-meter">
+          Violation <span id="proctor-modal-count">1</span> of 3 allowed
+        </div>
+        <p class="proctor-fine-print">Exceeding 3 violations will immediately lock and auto-submit your exam with an academic dishonesty flag.</p>
+      </div>
+      <div class="modal-footer justify-center">
+        <button type="button" class="btn btn-primary btn-block" id="btn-dismiss-proctor">Return to Exam Immediately</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ADD QUESTION ================= -->
+  <div class="modal-overlay" id="modal-add-q">
+    <div class="modal-dialog glass-card">
+      <div class="modal-header">
+        <h3>Create New Exam Question</h3>
+        <button class="modal-close-btn" id="modal-close-add-q">&times;</button>
+      </div>
+
+      <form id="form-add-q">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="new-q-text">Question Prompt <span class="required">*</span></label>
+            <textarea id="new-q-text" rows="3" placeholder="Enter clear, concise question text..." required></textarea>
+          </div>
+
+          <div class="options-form-grid">
+            <div class="form-group">
+              <label for="new-opt-1">Option 1 <span class="required">*</span></label>
+              <input type="text" id="new-opt-1" placeholder="Choice A" required>
+            </div>
+            <div class="form-group">
+              <label for="new-opt-2">Option 2 <span class="required">*</span></label>
+              <input type="text" id="new-opt-2" placeholder="Choice B" required>
+            </div>
+            <div class="form-group">
+              <label for="new-opt-3">Option 3 <span class="required">*</span></label>
+              <input type="text" id="new-opt-3" placeholder="Choice C" required>
+            </div>
+            <div class="form-group">
+              <label for="new-opt-4">Option 4 <span class="required">*</span></label>
+              <input type="text" id="new-opt-4" placeholder="Choice D" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="new-correct-idx">Select Correct Option <span class="required">*</span></label>
+            <select id="new-correct-idx" required>
+              <option value="0">Option 1 is Correct</option>
+              <option value="1">Option 2 is Correct</option>
+              <option value="2">Option 3 is Correct</option>
+              <option value="3">Option 4 is Correct</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="btn-cancel-add-q">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-confirm-add-q">Save to Question Bank</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: SUBMISSION CONFIRMATION ================= -->
+  <div class="modal-overlay" id="modal-confirm-submit">
+    <div class="modal-dialog glass-card modal-sm">
+      <div class="modal-header">
+        <h3>Ready to Submit?</h3>
+        <button class="modal-close-btn" id="modal-close-confirm">&times;</button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="confirm-icon-box">📋</div>
+        <p class="confirm-summary">You have answered <strong id="confirm-answered-count">0</strong> of <strong id="confirm-total-count">0</strong> questions.</p>
+        <p class="confirm-sub">Remaining unselected questions will be scored as zero. Once submitted, answers cannot be altered.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-cancel-submit">Review Answers</button>
+        <button type="button" class="btn btn-primary" id="btn-execute-submit">Confirm & Finalize</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

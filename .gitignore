@@ -1,0 +1,10 @@
+# Compiled Java class files
+*.class
+
+# Runtime Logs
+*.log
+.system_generated/
+
+# OS specific files
+.DS_Store
+Thumbs.db

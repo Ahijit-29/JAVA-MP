@@ -1,0 +1,33 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "Goutam",
+    "Kumar",
+    "Majhi",
+    "Priya",
+    "Sharma",
+    "Rahul",
+    "Verma",
+    "Aditi",
+    "Ahijit",
+    "Ananya",
+    "CyberCoder",
+    "Metaspace",
+    "println",
+    "rundll",
+    "setlocal",
+    "errorlevel",
+    "LASTEXITCODE",
+    "passmark",
+    "Passmark",
+    "javac",
+    "httpserver",
+    "scorebars",
+    "fineprint"
+  ],
+  "ignorePaths": [
+    "*.class",
+    "*.txt"
+  ]
+}
