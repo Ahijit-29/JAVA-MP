@@ -68,7 +68,7 @@ public class QuizSystem {
 
     static void scorecard() throws IOException {
         String id = ask("Candidate ID: ");
-        
+                
         List<Result> all = ResultStore.loadAll();
         Result latest = null;
         
@@ -77,12 +77,19 @@ public class QuizSystem {
     }
 
     static void history() throws IOException {
+        
         String id = ask("Candidate ID (blank = all): ");
+        
         System.out.printf("%-8s %-15s %-9s %-8s %-6s %s%n", "ID", "Name", "Score", "Percent", "Time", "Date");
+        
         for (Result r : ResultStore.loadAll())
+            
             if (id.isEmpty() || r.candidateId.equals(id))
+                
                 System.out.printf("%-8s %-15s %-9s %-8s %-6s %s%s%n", r.candidateId, r.name,
+                                  
                         r.score + "/" + r.total, String.format("%.1f%%", r.percent()), r.timeTakenSec + "s",
+                                  
                         r.timestamp, r.autoSubmitted ? " [auto]" : "");
     }
     
@@ -99,11 +106,17 @@ public class QuizSystem {
             if (r.autoSubmitted) auto++;
         }
         System.out.println("\n===== INSTRUCTOR PERFORMANCE REPORT =====");
+        
         System.out.println("Total attempts   : " + all.size());
+        
         System.out.printf("Average score    : %.1f%%%n", sum / all.size());
+        
         System.out.printf("Highest          : %.1f%% (%s)%n", max, top);
+        
         System.out.printf("Lowest           : %.1f%% (%s)%n", min, low);
+        
         System.out.printf("Pass rate (>=40%%): %.1f%% (%d/%d)%n", pass * 100.0 / all.size(), pass, all.size());
+        
         System.out.println("Auto-submitted   : " + auto);
         try (PrintWriter pw = new PrintWriter(new FileWriter("report.txt"))) {
             pw.printf("Attempts=%d, Avg=%.1f%%, High=%.1f%%, Low=%.1f%%, PassRate=%.1f%%, Auto=%d%n",
