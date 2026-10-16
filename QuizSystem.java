@@ -68,8 +68,10 @@ public class QuizSystem {
 
     static void scorecard() throws IOException {
         String id = ask("Candidate ID: ");
+        
         List<Result> all = ResultStore.loadAll();
         Result latest = null;
+        
         for (Result r : all) if (r.candidateId.equals(id)) latest = r;
         if (latest == null) System.out.println("No result found."); else latest.print();
     }
@@ -83,6 +85,7 @@ public class QuizSystem {
                         r.score + "/" + r.total, String.format("%.1f%%", r.percent()), r.timeTakenSec + "s",
                         r.timestamp, r.autoSubmitted ? " [auto]" : "");
     }
+    
 
     static void report() {
         List<Result> all = ResultStore.loadAll();
