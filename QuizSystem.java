@@ -341,17 +341,20 @@ class QuizSession {
     boolean isSubmitted() { return submitted.get(); }
 
     void conduct(BufferedReader in) throws IOException {
+        
         TimerThread timer = new TimerThread(this, durationSec);
         System.out.println("\nQuiz started for " + candidate.name + ". Duration: " + durationSec + "s. Enter 1-4 (Enter = skip).");
         timer.start();
+        
         for (int i = 0; i < questions.size() && !isSubmitted(); i++) {
             Question q = questions.get(i);
+            
             System.out.println("\nQ" + (i + 1) + ". " + q.text);
             for (int j = 0; j < 4; j++) System.out.println("   " + (j + 1) + ") " + q.options[j]);
             System.out.print("Your answer: ");
             String line = in.readLine();
             if (line == null) break;
-            if (isSubmitted()) break;               // time expired while waiting for input
+            if (isSubmitted()) break;               
             try {
                 int a = Integer.parseInt(line.trim());
                 if (a >= 1 && a <= 4) answers[i] = a - 1; else System.out.println("Invalid option, skipped.");
