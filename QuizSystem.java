@@ -136,79 +136,143 @@ class Candidate {
         return new Candidate(p[0], p[1], p[2]);
     }
 }
-
 class Result {
+
     String candidateId, name, timestamp; int score, total; long timeTakenSec; boolean autoSubmitted;
+
     Result(String cid, String name, int score, int total, long t, boolean auto, String ts) {
+
         candidateId = cid; this.name = name; this.score = score; this.total = total;
+
         timeTakenSec = t; autoSubmitted = auto; timestamp = ts;
+
     }
+
     double percent() { return total == 0 ? 0 : score * 100.0 / total; }
+
     String toFileLine() {
+
         return candidateId + "|" + name + "|" + score + "|" + total + "|" + timeTakenSec + "|" + autoSubmitted + "|" + timestamp;
+
     }
+
     static Result fromFileLine(String line) {
-        String[] p = line.split("\\|");
+
+        String[] p = line.split("\\\\|");
+
         return new Result(p[0], p[1], Integer.parseInt(p[2]), Integer.parseInt(p[3]),
+
                 Long.parseLong(p[4]), Boolean.parseBoolean(p[5]), p[6]);
+
     }
+
     void print() {
+
         System.out.println("-------- SCORECARD --------");
+
         System.out.println("Candidate : " + name + " (" + candidateId + ")");
+
         System.out.println("Score     : " + score + "/" + total + String.format(" (%.1f%%)", percent()));
+
         System.out.println("Result    : " + (percent() >= 40 ? "PASS" : "FAIL"));
+
         System.out.println("Time taken: " + timeTakenSec + "s" + (autoSubmitted ? " (auto-submitted)" : ""));
+
         System.out.println("Date      : " + timestamp);
+
         System.out.println("---------------------------");
+
     }
+
 }
 
 /* ---------- File-based storage ---------- */
+
 class FileStore {
+
     static List<String> read(String file) {
+
         try {
+
             Path p = Paths.get(file);
+
             return Files.exists(p) ? Files.readAllLines(p) : new ArrayList<>();
+
         } catch (IOException e) { System.out.println("Read error: " + e.getMessage()); return new ArrayList<>(); }
+
     }
+
     static void append(String file, String line) {
+
         try (PrintWriter pw = new PrintWriter(new FileWriter(file, true))) { pw.println(line); }
+
         catch (IOException e) { System.out.println("Write error: " + e.getMessage()); }
+
     }
+
 }
 
 class QuestionBank {
-    static final String FILE = "questions.txt";
-    List<Question> questions = new ArrayList<>();
-    QuestionBank() {
-        for (String l : FileStore.read(FILE)) if (!l.isBlank()) questions.add(Question.fromFileLine(l));
-        if (questions.isEmpty()) seed();
-    }
-    private void seed() {
-        add("What will System.out.println(s1 == s2) print if String s1 = \"Java\"; String s2 = new String(\"Java\").intern();?", new String[]{"false", "true", "Compile-time error", "NullPointerException"}, 1);
-        add("In Java multithreading, what is the primary guarantee of the volatile keyword?", new String[]{"Guarantees atomic execution of compound operations like count++", "Prevents instruction reordering and ensures thread visibility from main memory", "Acquires an intrinsic monitor lock on the object", "Prevents the variable from being serialized"}, 1);
-        add("If both a try block and its finally block contain return statements, which value is returned?", new String[]{"The value from the try block", "The value from the finally block", "Compilation error: unreachable code", "Both values concatenated"}, 1);
-        add("What happens when two distinct keys produce the exact same hashCode() in a Java 8+ HashMap?", new String[]{"HashMap throws a HashCollisionException", "The second key overwrites the first key immediately", "Stored in the same bucket as a linked list, transforming into a red-black tree when chain exceeds 8", "A new HashMap with double capacity is automatically allocated"}, 2);
-        add("Which statement regarding Java Generics Type Erasure is true?", new String[]{"Generic type information is fully preserved in bytecode for runtime reflection", "Type parameters are replaced with their bounds or Object, and explicit casts are inserted", "Primitive types like int can be directly used as generic type arguments", "Generic classes generate separate bytecode classes for each type parameter"}, 1);
-        add("Given Super { int x = 10; } and Sub extends Super { int x = 20; }, what does Super obj = new Sub(); System.out.println(obj.x); print?", new String[]{"20", "10", "Compilation error", "Runtime ClassCastException"}, 1);
-        add("Which interface must a resource class implement to be managed automatically in a try-with-resources statement?", new String[]{"java.io.Serializable", "java.lang.AutoCloseable", "java.lang.Cloneable", "java.lang.Runnable"}, 1);
-        add("In Java multithreading, what condition causes a Deadlock?", new String[]{"A thread runs an infinite loop consuming 100% CPU", "Two or more threads are waiting indefinitely for locks held by each other in a cyclic dependency", "A thread attempts to access an uninitialized object reference", "The JVM runs out of heap memory during thread allocation"}, 1);
-        add("What is the result of executing: List<Integer> list = Arrays.asList(1, 2, 3); list.add(4);?", new String[]{"[1, 2, 3, 4]", "UnsupportedOperationException at runtime", "Compilation Error: add() method not found", "IndexOutOfBoundsException at runtime"}, 1);
-        add("Which memory region in the JVM stores local primitive variables and method call stack frames?", new String[]{"Heap Memory", "Metaspace", "Java Thread Stack", "Code Cache"}, 2);
-        add("What is the core distinction between fail-fast and fail-safe iterators in Java Collections?", new String[]{"Fail-fast throws ConcurrentModificationException on modification; fail-safe operates on a cloned snapshot", "Fail-fast iterators are synchronized; fail-safe iterators are unsynchronized", "Fail-fast iterators only operate on Sets; fail-safe iterators operate on Lists", "Fail-fast iterators continue running silently on concurrent changes"}, 0);
-        add("What is the output of Math.min(Double.MIN_VALUE, 0.0d)?", new String[]{"0.0", "Double.MIN_VALUE", "Double.NaN", "-Infinity"}, 0);
-        add("Which garbage collection algorithm became the default collector starting in Java 9 for server-class hardware?", new String[]{"Serial GC", "Parallel GC", "Garbage-First (G1) GC", "Z Garbage Collector (ZGC)"}, 2);
-        add("Can an abstract class in Java have a constructor, and if so, how is it invoked?", new String[]{"No, abstract classes cannot declare constructors because they cannot be instantiated", "Yes, it is invoked via super() when a concrete subclass instance is instantiated", "Yes, but it can only be invoked statically using reflection", "No, only concrete classes and interfaces can declare constructors"}, 1);
-        add("In Java Functional Programming, what is the functional descriptor / signature of a Predicate<T>?", new String[]{"T -> void", "T -> boolean", "() -> T", "(T, T) -> T"}, 1);
-    }
-    void add(String text, String[] opts, int correct) {
-        int id = questions.isEmpty() ? 1 : questions.get(questions.size() - 1).id + 1;
-        Question q = new Question(id, text.replace("|", "/"), Arrays.stream(opts).map(o -> o.replace("|", "/")).toArray(String[]::new), correct);
-        questions.add(q);
-        FileStore.append(FILE, q.toFileLine());
-    }
-}
 
+    static final String FILE = "questions.txt";
+
+    List<Question> questions = new ArrayList<>();
+
+    QuestionBank() {
+
+        for (String l : FileStore.read(FILE)) if (!l.isBlank()) questions.add(Question.fromFileLine(l));
+
+        if (questions.isEmpty()) seed();
+
+    }
+
+    private void seed() {
+
+        add("What will System.out.println(s1 == s2) print if String s1 = \"Java\"; String s2 = new String(\"Java\").intern();?", new String[]{"false", "true", "Compile-time error", "NullPointerException"}, 1);
+
+        add("In Java multithreading, what is the primary guarantee of the volatile keyword?", new String[]{"Guarantees atomic execution of compound operations like count++", "Prevents instruction reordering and ensures thread visibility from main memory", "Acquires an intrinsic monitor lock on the object", "Prevents the variable from being serialized"}, 1);
+
+        add("If both a try block and its finally block contain return statements, which value is returned?", new String[]{"The value from the try block", "The value from the finally block", "Compilation error: unreachable code", "Both values concatenated"}, 1);
+
+        add("What happens when two distinct keys produce the exact same hashCode() in a Java 8+ HashMap?", new String[]{"HashMap throws a HashCollisionException", "The second key overwrites the first key immediately", "Stored in the same bucket as a linked list, transforming into a red-black tree when chain exceeds 8", "A new HashMap with double capacity is automatically allocated"}, 2);
+
+        add("Which statement regarding Java Generics Type Erasure is true?", new String[]{"Generic type information is fully preserved in bytecode for runtime reflection", "Type parameters are replaced with their bounds or Object, and explicit casts are inserted", "Primitive types like int can be directly used as generic type arguments", "Generic classes generate separate bytecode classes for each type parameter"}, 1);
+
+        add("Given Super { int x = 10; } and Sub extends Super { int x = 20; }, what does Super obj = new Sub(); System.out.println(obj.x); print?", new String[]{"20", "10", "Compilation error", "Runtime ClassCastException"}, 1);
+
+        add("Which interface must a resource class implement to be managed automatically in a try-with-resources statement?", new String[]{"java.io.Serializable", "java.lang.AutoCloseable", "java.lang.Cloneable", "java.lang.Runnable"}, 1);
+
+        add("In Java multithreading, what condition causes a Deadlock?", new String[]{"A thread runs an infinite loop consuming 100% CPU", "Two or more threads are waiting indefinitely for locks held by each other in a cyclic dependency", "A thread attempts to access an uninitialized object reference", "The JVM runs out of heap memory during thread allocation"}, 1);
+
+        add("What is the result of executing: List<Integer> list = Arrays.asList(1, 2, 3); list.add(4);?", new String[]{"[1, 2, 3, 4]", "UnsupportedOperationException at runtime", "Compilation Error: add() method not found", "IndexOutOfBoundsException at runtime"}, 1);
+
+        add("Which memory region in the JVM stores local primitive variables and method call stack frames?", new String[]{"Heap Memory", "Metaspace", "Java Thread Stack", "Code Cache"}, 2);
+
+        add("What is the core distinction between fail-fast and fail-safe iterators in Java Collections?", new String[]{"Fail-fast throws ConcurrentModificationException on modification; fail-safe operates on a cloned snapshot", "Fail-fast iterators are synchronized; fail-safe iterators are unsynchronized", "Fail-fast iterators only operate on Sets; fail-safe iterators operate on Lists", "Fail-fast iterators continue running silently on concurrent changes"}, 0);
+
+        add("What is the output of Math.min(Double.MIN_VALUE, 0.0d)?", new String[]{"0.0", "Double.MIN_VALUE", "Double.NaN", "-Infinity"}, 0);
+
+        add("Which garbage collection algorithm became the default collector starting in Java 9 for server-class hardware?", new String[]{"Serial GC", "Parallel GC", "Garbage-First (G1) GC", "Z Garbage Collector (ZGC)"}, 2);
+
+        add("Can an abstract class in Java have a constructor, and if so, how is it invoked?", new String[]{"No, abstract classes cannot declare constructors because they cannot be instantiated", "Yes, it is invoked via super() when a concrete subclass instance is instantiated", "Yes, but it can only be invoked statically using reflection", "No, only concrete classes and interfaces can declare constructors"}, 1);
+
+        add("In Java Functional Programming, what is the functional descriptor / signature of a Predicate<T>?", new String[]{"T -> void", "T -> boolean", "() -> T", "(T, T) -> T"}, 1);
+
+    }
+
+    void add(String text, String[] opts, int correct) {
+
+        int id = questions.isEmpty() ? 1 : questions.get(questions.size() - 1).id + 1;
+
+        Question q = new Question(id, text.replace("|", "/"), Arrays.stream(opts).map(o -> o.replace("|", "/")).toArray(String[]::new), correct);
+
+        questions.add(q);
+
+        FileStore.append(FILE, q.toFileLine());
+
+    }
+
+}
 class CandidateRegistry {
     static final String FILE = "candidates.txt";
     Map<String, Candidate> map = new LinkedHashMap<>();
